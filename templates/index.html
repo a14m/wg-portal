@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark light">
+
+    <title>{{.Title}}</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <header>
+        <h1 class="header__title">{{.Title}}</h1>
+        <p class="header__subtitle">Manage WireGuard VPN connections</p>
+    </header>
+    <main>
+        <article class="status">
+            <h2 class="status__header">WireGuard Status</h2>
+            <div id="status__container" class="status__container">
+                <div class="message loading">Loading Status...</div>
+            </div>
+        </article>
+        <article class="connections">
+            <h2 class="connections__header">WireGuard Connections</h2>
+            <div id="connections__container" class="connections__container">
+                <div class="message loading">Loading Connections...</div>
+            </div>
+        </article>
+        <article id="notifications">
+            <h3 class="notifications__header">Notifications</h3>
+            <div id="notifications__container" class="notifications__container">
+                <div class="message success">No Errors Found.</div>
+            </div>
+        </article>
+    </main>
+    <footer></footer>
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+:root {
+    --light-white: #FFFFFF;
+    --dark-white: #EFFFFF;
+    --light-black: #181818;
+    --dark-black: #000000;
+
+    --light-green: #27AE60;
+    --dark-green: #27AE60;
+    --light-yellow: #F1C40F;
+    --dark-yellow: #F1C40F;
+    --light-red: #E74C3C;
+    --dark-red: #E74C3C;
+}
+
+html {
+  background-color: var(--light-black);
+}
+
+@media (prefers-color-scheme: light) {
+  html {
+    background-color: var(--light-white);
+  }
+  .message.loading,
+  .message.warning {
+    border-color: var(--light-yellow);
+  }
+  .message.success {
+    border-color: var(--light-green);
+  }
+  .message.error {
+    border-color: var(--light-red);
+  }
+  .connection.loading {
+    border-color: var(--light-yellow);
+  }
+
+  .connection.active {
+    border-color: var(--light-green);
+  }
+}
+
+body {
+  font-family: "PT Sans", "Kohinoor Bangla", sans-serif;
+  max-width: 1024px;
+  min-width: 375px;
+  margin: 0 auto;
+  float: none;
+  font-size: 18px;
+}
+
+header {
+  text-align: center;
+  font-style: normal;
+  .header__title {
+    font-size: 32px;
+    margin-bottom: -16px;
+    margin-top: 36px;
+    clear: right;
+  }
+}
+
+main {
+  margin: 32px;
+}
+
+.status {
+  min-height: 160px;
+}
+
+.status__header,
+.connections__header {
+}
+
+.message {
+  font-family: monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  border-style: solid;
+  border-width: 1px;
+  border-left-width: 14px;
+  padding: 14px;
+  white-space: pre-line;
+}
+
+.message.loading,
+.message.warning {
+  border-color: var(--dark-yellow);
+}
+.message.success {
+  border-color: var(--dark-green);
+}
+.message.error {
+  border-color: var(--dark-red);
+}
+
+.connections__container {
+  width: 100%;
+}
+.connection {
+  font-family: monospace;
+  font-size: 14px;
+  cursor: pointer;
+  border: 1px solid;
+  padding: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+.connection.loading {
+  border-left-width: 14px;
+  border-color: var(--dark-yellow);
+}
+
+.connection.active {
+  border-left-width: 14px;
+  border-color: var(--dark-green);
+}
+
+footer {
+  margin: 32px;
+}
