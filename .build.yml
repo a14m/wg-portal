@@ -10,6 +10,8 @@ packages:
   - go
   - curl
   - make
+  - nodejs
+  - npm
 tasks:
   - setup: |
       # This is for not having to cd into the <repo> for each task
@@ -18,6 +20,9 @@ tasks:
   - deps: |
       curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh | sh -s -- -b $(go env GOPATH)/bin
       golangci-lint --version
+      node --version
+      npm --version
+      npx --version
   - lint: |
       make deps
       make verify
