@@ -38,7 +38,7 @@ html {
     border-color: var(--light-green);
   }
 
-  .login__form input[type=submit] {
+  .login__form button {
     color: var(--light-green);
   }
 }
@@ -48,7 +48,7 @@ html {
   .header__logout {
     position: inherit !important;
   }
-  .header__logout input[type=submit] {
+  .header__logout button {
     width: 100% !important;
   }
 }
@@ -79,7 +79,7 @@ header {
   right: 1rem;
 }
 
-.header__logout input[type=submit] {
+.header__logout button {
   border: 1px solid;
   padding: 1rem;
   color: var(--dark-red);
@@ -90,10 +90,6 @@ header {
 
 .status {
   min-height: 160px;
-}
-
-.status__header,
-.connections__header {
 }
 
 .message {
@@ -164,7 +160,7 @@ header {
   background-color: inherit;
 }
 
-.login__form input[type=submit] {
+.login__form button {
   border: 1px solid;
   padding: 1rem;
   color: var(--dark-green);

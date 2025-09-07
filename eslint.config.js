@@ -10,6 +10,8 @@ export default [
         document: "readonly",
         console: "readonly",
         fetch: "readonly",
+        setInterval: "readonly",
+        clearInterval: "readonly",
         App: "readonly",
         Utils: "readonly",
         ConnectionManager: "readonly",
