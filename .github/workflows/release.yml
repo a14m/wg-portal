@@ -1,0 +1,44 @@
+---
+name: "Build and Release"
+on:
+  push:
+    tags:
+      - v*
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.25'
+      - name: Golangci-lint
+        uses: golangci/golangci-lint-action@v8.0.0
+      - name: Install dependencies
+        run: make deps
+      - name: Run lints
+        run: make lint
+      - name: Build binaries
+        run: make build
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: wg-portal-binaries
+          path: dist/
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/wg-portal-linux-amd64
+            dist/wg-portal-linux-arm64
+            dist/wg-portal-linux-arm
+            dist/checksums.txt
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

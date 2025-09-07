@@ -22,6 +22,8 @@ tasks:
       # This is for not having to cd into the <repo> for each task
       echo 'cd wireguard-gateway-portal' >> ~/.buildenv
       echo 'export "PATH=/home/build/go/bin:$PATH"' >> ~/.buildenv
+  - mirror: |
+      git push --force --mirror git@github.com:a14m/wireguard-gateway-portal.git
   - deps: |
       curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh | sh -s -- -b $(go env GOPATH)/bin
       golangci-lint --version
@@ -34,5 +36,3 @@ tasks:
       make lint
   - build: |
       make build
-  - mirror: |
-      git push --force --mirror git@github.com:a14m/wireguard-gateway-portal.git
