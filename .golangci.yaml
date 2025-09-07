@@ -17,11 +17,7 @@ linters:
       checks:
         - all
         - '-ST1000'  # disable the rule SA1000 pkg comment
-        - '-ST1003'  # disable the rule SA1003 ALL_CAPS VARS
-        - '-ST1005'  # disable the rule SA1005 error strings should not be capitalized
         - '-ST1020'  # Exported methods comment style
-        - '-ST1021'  # Exported methods comment style
-        - '-ST1022'  # Exported methods comment style
     revive:
       confidence: 0.8
       severity: warning
@@ -64,36 +60,9 @@ linters:
           disabled: true
         - name: exported
           disabled: true
-  exclusions:
-    generated: lax
-    rules:
-      - linters:
-          - line-length-limit
-          - revive
-        path: _test\.go
-      - linters:
-          - revive
-        text: 'unused-parameter: parameter \S+ seems to be unused, consider removing or renaming it as _'
-      - linters:
-          - revive
-        text: 'empty-block: this block is empty, you can remove it'
-      - linters:
-          - errcheck
-        path: _test\.go
-        text: Error return value of .((os\.)?std(out|err)\..*|.*Close|.*Flush|os\.Remove(All)?|.*printf?|os\.(Unset|Set)?env)|afero.WriteFile. is not checked
-    paths:
-      - third_party$
-      - builtin$
-      - examples$
 issues:
   max-issues-per-linter: 0
   max-same-issues: 0
 formatters:
   enable:
     - gofumpt
-  exclusions:
-    generated: lax
-    paths:
-      - third_party$
-      - builtin$
-      - examples$
