@@ -1,0 +1,7 @@
+---
+host: "0.0.0.0"
+port: "8080"
+
+# Example hash for password "changeme" (double SHA256)
+# echo -n "changeme" | sha256sum | awk '{printf $1}' | sha256sum | awk '{print $1}'
+password_hash: "96c3780287c58bd0867c8cd9b2d60c387ea070c4df3f87d2d3e3c770d3baab0b"

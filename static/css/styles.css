@@ -37,13 +37,27 @@ html {
   .connection.active {
     border-color: var(--light-green);
   }
+
+  .login__form input[type=submit] {
+    color: var(--light-green);
+  }
+}
+
+/* Handle logout on small devices */
+@media (max-width: 600px) {
+  .header__logout {
+    position: inherit !important;
+  }
+  .header__logout input[type=submit] {
+    width: 100% !important;
+  }
 }
 
 body {
   font-family: "PT Sans", "Kohinoor Bangla", sans-serif;
   max-width: 1024px;
   min-width: 375px;
-  margin: 0 auto;
+  margin: 0 2rem;
   float: none;
   font-size: 18px;
 }
@@ -59,8 +73,19 @@ header {
   }
 }
 
-main {
-  margin: 32px;
+.header__logout {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+}
+
+.header__logout input[type=submit] {
+  border: 1px solid;
+  padding: 1rem;
+  color: var(--dark-red);
+  background-color: inherit;
+  font-family: monospace;
+  margin-top: 1rem;
 }
 
 .status {
@@ -113,6 +138,39 @@ main {
 .connection.active {
   border-left-width: 14px;
   border-color: var(--dark-green);
+}
+
+.login {
+  font-family: monospace;
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+
+.login__container {
+  min-width: 280px;
+}
+
+.login__form {
+  display: grid;
+  font-size: 14px;
+  margin-top: 2rem;
+}
+
+.login__form input[type=password] {
+  border: 1px solid;
+  padding: 1rem;
+  font-family: monospace;
+  background-color: inherit;
+}
+
+.login__form input[type=submit] {
+  border: 1px solid;
+  padding: 1rem;
+  color: var(--dark-green);
+  background-color: inherit;
+  font-family: monospace;
+  margin-top: 1rem;
 }
 
 footer {

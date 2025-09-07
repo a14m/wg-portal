@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark light">
+
+    <title>WireGuard Gateway Portal</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <header>
+        <h1 class="header__title">WireGuard Gateway Portal</h1>
+        <p class="header__subtitle">Manage WireGuard VPN connections</p>
+    </header>
+    <main>
+        <div class="login">
+            <div class="login__container">
+                {{if .Error}}
+                <div id="notifications__container" class="notifications__container">
+                    <div class="message error">{{.Error}}</div>
+                </div>
+                {{end}}
+
+                <form class="login__form" method="POST" action="/login">
+                    <input type="password" name="password" placeholder="Password" required>
+                    <input type="submit" value="Login">
+                </form>
+            </div>
+        </div>
+    </main>
+    <footer></footer>
+</body>
+</html>

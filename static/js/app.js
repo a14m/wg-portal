@@ -112,6 +112,8 @@ const ConnectionManager = {
 
 // Status management
 const StatusManager = {
+    intervalId: null,
+
     // Load and display WireGuard status
     async loadStatus() {
         try {
@@ -126,10 +128,35 @@ const StatusManager = {
             Utils.renderError(App.elements.statusArea, error.message);
         }
     },
+
+    startAutoRefresh() {
+        // Clear any existing interval first
+        this.stopAutoRefresh();
+        // Start new interval
+        this.intervalId = setInterval(() => this.loadStatus(), 5000);
+    },
+
+    stopAutoRefresh() {
+        if (this.intervalId) {
+            clearInterval(this.intervalId);
+            this.intervalId = null;
+        }
+    }
 };
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', () => {
     StatusManager.loadStatus();
     ConnectionManager.loadConnections();
+    StatusManager.startAutoRefresh();
+});
+
+// Pause when tab is hidden, resume when visible
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+        StatusManager.stopAutoRefresh();
+    } else {
+        StatusManager.loadStatus(); // Immediate refresh when back
+        StatusManager.startAutoRefresh();
+    }
 });

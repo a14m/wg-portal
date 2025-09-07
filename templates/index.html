@@ -5,13 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="dark light">
 
-    <title>{{.Title}}</title>
+    <title>WireGuard Gateway Portal</title>
     <link rel="stylesheet" href="/static/css/styles.css">
 </head>
 <body>
     <header>
-        <h1 class="header__title">{{.Title}}</h1>
+        <h1 class="header__title">WireGuard Gateway Portal</h1>
         <p class="header__subtitle">Manage WireGuard VPN connections</p>
+        <div class="header__logout">
+            <form method="POST" action="/logout">
+                <input type="submit" value="Logout">
+            </form>
+        </div>
     </header>
     <main>
         <article class="status">

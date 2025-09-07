@@ -7,22 +7,17 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-type ServerConfig struct {
-	Host  string `yaml:"host"`
-	Port  string `yaml:"port"`
-	Title string `yaml:"title"`
-}
-
 type Config struct {
-	Server ServerConfig `yaml:"server"`
+	Host         string `yaml:"host"`
+	Port         string `yaml:"port"`
+	PasswordHash string `yaml:"password_hash"`
 }
 
 // Default configuration values
 func DefaultConfig() *Config {
 	config := &Config{}
-	config.Server.Host = "0.0.0.0"
-	config.Server.Port = "8080"
-	config.Server.Title = "WireGuard Gateway Portal"
+	config.Host = "0.0.0.0"
+	config.Port = "8080"
 	return config
 }
 
@@ -52,5 +47,5 @@ func LoadConfig(configPath string) (*Config, error) {
 
 // GetAddress returns the server address in host:port format
 func (c *Config) GetAddress() string {
-	return fmt.Sprintf("%s:%s", c.Server.Host, c.Server.Port)
+	return fmt.Sprintf("%s:%s", c.Host, c.Port)
 }

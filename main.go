@@ -20,23 +20,25 @@ type APIResponse struct {
 
 // Server encapsulates our HTTP server
 type Server struct {
-	mux       *http.ServeMux
-	templates *template.Template
-	config    *internal.Config
+	mux            *http.ServeMux
+	templates      *template.Template
+	config         *internal.Config
+	sessionManager *internal.SessionManager
 }
 
 // NewServer creates a new server instance
 func NewServer(config *internal.Config) (*Server, error) {
 	// Parse templates
-	templates, err := template.ParseFiles("templates/index.html")
+	templates, err := template.ParseFiles("templates/index.html", "templates/login.html")
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse templates: %w", err)
 	}
 
 	s := &Server{
-		mux:       http.NewServeMux(),
-		templates: templates,
-		config:    config,
+		mux:            http.NewServeMux(),
+		templates:      templates,
+		config:         config,
+		sessionManager: internal.NewSessionManager(),
 	}
 	s.setupRoutes()
 	return s, nil
@@ -44,16 +46,18 @@ func NewServer(config *internal.Config) (*Server, error) {
 
 // setupRoutes configures all HTTP routes
 func (s *Server) setupRoutes() {
-	// Serve static files
+	// Serve static files (no auth required)
 	s.mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 
-	// Main page
-	s.mux.HandleFunc("/", s.handleHome)
+	// Auth routes (no auth required)
+	s.mux.HandleFunc("/login", s.handleLogin)
+	s.mux.HandleFunc("/logout", s.handleLogout)
 
-	// API endpoints
-	s.mux.HandleFunc("/api/connections", s.handleConnectionsAPI)
-	s.mux.HandleFunc("/api/connections/toggle", s.handleToggleAPI)
-	s.mux.HandleFunc("/api/status", s.handleStatusAPI)
+	// Protected routes
+	s.mux.HandleFunc("/", s.requireAuth(s.handleHome))
+	s.mux.HandleFunc("/api/connections", s.requireAuth(s.handleConnectionsAPI))
+	s.mux.HandleFunc("/api/connections/toggle", s.requireAuth(s.handleToggleAPI))
+	s.mux.HandleFunc("/api/status", s.requireAuth(s.handleStatusAPI))
 }
 
 // handleHome serves the main HTML page
@@ -64,10 +68,7 @@ func (s *Server) handleHome(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	templateData := map[string]any{
-		"Title": s.config.Server.Title,
-	}
-	if err := s.templates.ExecuteTemplate(w, "index.html", templateData); err != nil {
+	if err := s.templates.ExecuteTemplate(w, "index.html", nil); err != nil {
 		log.Printf("Error rendering template: %v", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}
@@ -166,16 +167,115 @@ func (*Server) sendErrorResponse(w http.ResponseWriter, message string, statusCo
 	})
 }
 
+// requireAuth middleware checks for valid authentication
+func (s *Server) requireAuth(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		cookie, err := r.Cookie("session_id")
+		if err != nil {
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
+			return
+		}
+
+		_, valid := s.sessionManager.ValidateSession(cookie.Value)
+		if !valid {
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
+			return
+		}
+
+		next(w, r)
+	}
+}
+
+// handleLogin handles login form display and processing
+func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		// Show login form
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		templateData := map[string]any{
+			"Error": "",
+		}
+		if err := s.templates.ExecuteTemplate(w, "login.html", templateData); err != nil {
+			log.Printf("Error rendering login template: %v", err)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		}
+
+	case http.MethodPost:
+		password := r.FormValue("password")
+
+		// Validate credentials
+		if internal.ValidatePassword(password, s.config.PasswordHash) {
+			// Create session
+			sessionID, expires, err := s.sessionManager.CreateSession()
+			if err != nil {
+				log.Printf("Error creating session: %v", err)
+				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+				return
+			}
+
+			// Set session cookie
+			cookie := &http.Cookie{
+				Name:     "session_id",
+				Value:    sessionID,
+				Expires:  expires,
+				HttpOnly: true,
+				SameSite: http.SameSiteStrictMode,
+			}
+			http.SetCookie(w, cookie)
+
+			http.Redirect(w, r, "/", http.StatusSeeOther)
+		} else {
+			// Invalid credentials
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			templateData := map[string]any{
+				"Error": "Wrong password",
+			}
+			if err := s.templates.ExecuteTemplate(w, "login.html", templateData); err != nil {
+				log.Printf("Error rendering login template: %v", err)
+				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			}
+		}
+
+	default:
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
+}
+
+// handleLogout handles user logout
+func (s *Server) handleLogout(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Get session cookie and delete session
+	if cookie, err := r.Cookie("session_id"); err == nil {
+		s.sessionManager.DeleteSession(cookie.Value)
+	}
+
+	// Clear session cookie
+	cookie := &http.Cookie{
+		Name:     "session_id",
+		Value:    "",
+		MaxAge:   -1,
+		HttpOnly: true,
+		SameSite: http.SameSiteStrictMode,
+	}
+	http.SetCookie(w, cookie)
+
+	http.Redirect(w, r, "/login", http.StatusSeeOther)
+}
+
 // Start starts the HTTP server
 func (s *Server) Start() error {
 	addr := s.config.GetAddress()
-	log.Printf("%s starting on http://%s\n", s.config.Server.Title, addr)
+	log.Printf("Starting on http://%s\n", addr)
 	return http.ListenAndServe(addr, s.mux)
 }
 
 func main() {
 	// Load configuration
-	config, err := internal.LoadConfig("config.yaml")
+	config, err := internal.LoadConfig("config.yml")
 	if err != nil {
 		log.Fatalf("Failed to load config: %v", err)
 	}
