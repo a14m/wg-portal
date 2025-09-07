@@ -12,6 +12,11 @@ packages:
   - make
   - nodejs
   - npm
+artifacts:
+  - wireguard-gateway-portal/dist/wg-portal-linux-amd64
+  - wireguard-gateway-portal/dist/wg-portal-linux-arm64
+  - wireguard-gateway-portal/dist/wg-portal-linux-arm
+  - wireguard-gateway-portal/dist/checksums.txt
 tasks:
   - setup: |
       # This is for not having to cd into the <repo> for each task
