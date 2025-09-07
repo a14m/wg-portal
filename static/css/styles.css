@@ -72,6 +72,7 @@ footer {
   border-left-width: 14px;
   padding: 14px;
   white-space: pre-line;
+  margin-bottom: 1rem;
 }
 
 .message.loading,

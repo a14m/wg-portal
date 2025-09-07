@@ -214,10 +214,12 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (s *Server) showLoginForm(w http.ResponseWriter, _ *http.Request) {
+func (s *Server) showLoginForm(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	isHTTPS := r.TLS != nil
 	templateData := map[string]any{
-		"Error": "",
+		"Error":   "",
+		"IsHTTPS": isHTTPS,
 	}
 	if err := s.templates.ExecuteTemplate(w, "login.html", templateData); err != nil {
 		log.Printf("Error rendering login template: %v", err)

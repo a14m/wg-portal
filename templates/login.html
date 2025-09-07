@@ -16,11 +16,14 @@
     <main>
         <div class="login">
             <div class="login__container">
-                {{if .Error}}
                 <div id="notifications__container" class="notifications__container">
+                    {{if not .IsHTTPS}}
+                    <div class="message warning">Consider upgrading to HTTPS for better security.</div>
+                    {{end}}
+                    {{if .Error}}
                     <div class="message error">{{.Error}}</div>
+                    {{end}}
                 </div>
-                {{end}}
 
                 <form class="login__form" method="POST" action="/login">
                     <input type="password" name="password" placeholder="Password" required>
