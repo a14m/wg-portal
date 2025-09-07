@@ -34,3 +34,5 @@ tasks:
       make lint
   - build: |
       make build
+  - mirror: |
+      git push --force --mirror git@github.com:a14m/wireguard-gateway-portal.git
