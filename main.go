@@ -7,7 +7,6 @@ import (
 	"log"
 	"net/http"
 	"strings"
-
 	"wg-portal/internal"
 )
 
@@ -190,40 +189,14 @@ func (s *Server) requireAuth(next http.HandlerFunc) http.HandlerFunc {
 func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
-		// Show login form
-		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		templateData := map[string]any{
-			"Error": "",
-		}
-		if err := s.templates.ExecuteTemplate(w, "login.html", templateData); err != nil {
-			log.Printf("Error rendering login template: %v", err)
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		}
+		s.showLoginForm(w, r)
 
 	case http.MethodPost:
 		password := r.FormValue("password")
 
 		// Validate credentials
 		if internal.ValidatePassword(password, s.config.PasswordHash) {
-			// Create session
-			sessionID, expires, err := s.sessionManager.CreateSession()
-			if err != nil {
-				log.Printf("Error creating session: %v", err)
-				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-				return
-			}
-
-			// Set session cookie
-			cookie := &http.Cookie{
-				Name:     "session_id",
-				Value:    sessionID,
-				Expires:  expires,
-				HttpOnly: true,
-				SameSite: http.SameSiteStrictMode,
-			}
-			http.SetCookie(w, cookie)
-
-			http.Redirect(w, r, "/", http.StatusSeeOther)
+			s.loginUser(w, r)
 		} else {
 			// Invalid credentials
 			w.Header().Set("Content-Type", "text/html; charset=utf-8")
@@ -239,6 +212,39 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 	default:
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
+}
+
+func (s *Server) showLoginForm(w http.ResponseWriter, _ *http.Request) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	templateData := map[string]any{
+		"Error": "",
+	}
+	if err := s.templates.ExecuteTemplate(w, "login.html", templateData); err != nil {
+		log.Printf("Error rendering login template: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	}
+}
+
+func (s *Server) loginUser(w http.ResponseWriter, r *http.Request) {
+	// Create session
+	sessionID, expires, err := s.sessionManager.CreateSession()
+	if err != nil {
+		log.Printf("Error creating session: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	// Set session cookie
+	cookie := &http.Cookie{
+		Name:     "session_id",
+		Value:    sessionID,
+		Expires:  expires,
+		HttpOnly: true,
+		SameSite: http.SameSiteStrictMode,
+	}
+	http.SetCookie(w, cookie)
+
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 // handleLogout handles user logout
