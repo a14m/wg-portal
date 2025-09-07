@@ -1,0 +1,26 @@
+---
+image: alpine/edge
+secrets:
+  - 5077f4a0-6a32-46e8-aa7c-5be8778d0524
+sources:
+  - git@git.sr.ht/~a14m/wireguard-gateway-portal
+environment:
+  GIT_SSH_COMMAND: ssh -o StrictHostKeyChecking=no
+packages:
+  - go
+  - curl
+  - make
+tasks:
+  - setup: |
+      # This is for not having to cd into the <repo> for each task
+      echo 'cd wireguard-gateway-portal' >> ~/.buildenv
+      echo 'export "PATH=/home/build/go/bin:$PATH"' >> ~/.buildenv
+  - deps: |
+      curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh | sh -s -- -b $(go env GOPATH)/bin
+      golangci-lint --version
+  - lint: |
+      make deps
+      make verify
+      make lint
+  - build: |
+      make build
