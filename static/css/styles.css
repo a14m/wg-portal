@@ -16,52 +16,6 @@ html {
   background-color: var(--light-black);
 }
 
-@media (prefers-color-scheme: light) {
-  html {
-    background-color: var(--light-white);
-  }
-  .message.loading,
-  .message.warning {
-    border-color: var(--light-yellow);
-  }
-  .message.success {
-    border-color: var(--light-green);
-  }
-  .message.error {
-    border-color: var(--light-red);
-  }
-  .connection.loading {
-    border-color: var(--light-yellow);
-  }
-
-  .connection.active {
-    border-color: var(--light-green);
-  }
-
-  .login__form button {
-    color: var(--light-green);
-  }
-}
-
-/* Handle logout on small devices */
-@media (max-width: 600px) {
-  .header__logout {
-    position: inherit !important;
-  }
-  .header__logout button {
-    width: 100% !important;
-  }
-}
-
-body {
-  font-family: "PT Sans", "Kohinoor Bangla", sans-serif;
-  max-width: 1024px;
-  min-width: 375px;
-  margin: 0 2rem;
-  float: none;
-  font-size: 18px;
-}
-
 header {
   text-align: center;
   font-style: normal;
@@ -73,10 +27,27 @@ header {
   }
 }
 
+body {
+  font-family: "PT Sans", "Kohinoor Bangla", sans-serif;
+  max-width: 1024px;
+  min-width: 375px;
+  margin: 0 auto;
+  float: none;
+  font-size: 18px;
+}
+
+main {
+  margin: 0 2rem;
+}
+
 .header__logout {
   position: absolute;
   top: 1rem;
   right: 1rem;
+}
+
+footer {
+  margin: 32px;
 }
 
 .header__logout button {
@@ -169,6 +140,40 @@ header {
   margin-top: 1rem;
 }
 
-footer {
-  margin: 32px;
+@media (prefers-color-scheme: light) {
+  html {
+    background-color: var(--light-white);
+  }
+  .message.loading,
+  .message.warning {
+    border-color: var(--light-yellow);
+  }
+  .message.success {
+    border-color: var(--light-green);
+  }
+  .message.error {
+    border-color: var(--light-red);
+  }
+  .connection.loading {
+    border-color: var(--light-yellow);
+  }
+
+  .connection.active {
+    border-color: var(--light-green);
+  }
+
+  .login__form button {
+    color: var(--light-green);
+  }
+}
+
+/* Handle logout on small devices */
+@media (max-width: 600px) {
+  .header__logout {
+    position: inherit !important;
+    margin: 0 2rem;
+  }
+  .header__logout button {
+    width: 100% !important;
+  }
 }
