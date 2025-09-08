@@ -1,14 +1,20 @@
 package main
 
 import (
+	"embed"
 	"encoding/json"
 	"fmt"
 	"html/template"
+	"io/fs"
 	"log"
 	"net/http"
 	"strings"
+
 	"wg-portal/internal"
 )
+
+//go:embed templates/* static/*
+var embeddedAssets embed.FS
 
 // APIResponse represents a standard API response structure
 type APIResponse struct {
@@ -27,8 +33,8 @@ type Server struct {
 
 // NewServer creates a new server instance
 func NewServer(config *internal.Config) (*Server, error) {
-	// Parse templates
-	templates, err := template.ParseFiles("templates/index.html", "templates/login.html")
+	// Parse embedded templates
+	templates, err := template.ParseFS(embeddedAssets, "templates/index.html", "templates/login.html")
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse templates: %w", err)
 	}
@@ -45,8 +51,9 @@ func NewServer(config *internal.Config) (*Server, error) {
 
 // setupRoutes configures all HTTP routes
 func (s *Server) setupRoutes() {
-	// Serve static files (no auth required)
-	s.mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
+	// Serve embedded static files (no auth required)
+	staticFS, _ := fs.Sub(embeddedAssets, "static")
+	s.mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.FS(staticFS))))
 
 	// Auth routes (no auth required)
 	s.mux.HandleFunc("/login", s.handleLogin)
