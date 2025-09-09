@@ -17,13 +17,15 @@ TimeoutStartSec=30
 TimeoutStopSec=30
 
 # Security hardening
-NoNewPrivileges=true
+# NoNewPrivileges=true can't work becasue it's needed for sudo wg commands
+NoNewPrivileges=false
 ProtectSystem=strict
 ProtectHome=true
 ReadWritePaths=/etc/wireguard
 PrivateTmp=true
 PrivateDevices=true
-ProtectKernelTunables=true
+# ProtectKernelTunables=true prevents the service from writing to /proc/sys/* paths, sudo wg quick up fails
+ProtectKernelTunables=false
 ProtectKernelModules=true
 ProtectControlGroups=true
 RestrictSUIDSGID=true
