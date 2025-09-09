@@ -12,6 +12,7 @@ packages:
   - make
   - nodejs
   - npm
+  - shellcheck
 artifacts:
   - wg-portal/dist/wg-portal-linux-amd64
   - wg-portal/dist/wg-portal-linux-arm64
@@ -30,6 +31,7 @@ tasks:
       node --version
       npm --version
       npx --version
+      shellcheck --version
   - lint: |
       make deps
       make verify
