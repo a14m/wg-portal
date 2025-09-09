@@ -1,0 +1,39 @@
+[Unit]
+Description=WireGuard Portal Web Interface
+Documentation=https://git.sr.ht/~a14m/wg-portal
+After=network-online.target
+Wants=network-online.target
+Requires=network.target
+
+[Service]
+Type=simple
+User=wg-portal
+Group=wg-portal
+ExecStart=/etc/wg-portal/wg-portal
+WorkingDirectory=/etc/wg-portal
+Restart=always
+RestartSec=5
+TimeoutStartSec=30
+TimeoutStopSec=30
+
+# Security hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/etc/wireguard
+PrivateTmp=true
+PrivateDevices=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+RestrictRealtime=true
+LockPersonality=true
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=wg-portal
+
+[Install]
+WantedBy=multi-user.target

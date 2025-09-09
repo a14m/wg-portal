@@ -3,7 +3,7 @@ image: alpine/edge
 secrets:
   - 5077f4a0-6a32-46e8-aa7c-5be8778d0524
 sources:
-  - git@git.sr.ht/~a14m/wireguard-gateway-portal
+  - git@git.sr.ht/~a14m/wg-portal
 environment:
   GIT_SSH_COMMAND: ssh -o StrictHostKeyChecking=no
 packages:

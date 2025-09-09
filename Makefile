@@ -29,6 +29,11 @@ lint-js:
 	@echo "Linting JavaScript files..."
 	npx eslint static/js/*.js
 
+lint-shell:
+	@echo "Linting shell files..."
+	shellcheck deployment/install.sh
+	shellcheck deployment/uninstall.sh
+
 deps:
 	@echo "Downloading Go dependencies..."
 	go mod download
@@ -60,5 +65,5 @@ clean:
 	rm -rf dist/
 	@echo "Clean complete!"
 
-lint: lint-go lint-js lint-html lint-css
+lint: lint-go lint-js lint-html lint-css lint-shell
 	@echo "All linting complete!"
