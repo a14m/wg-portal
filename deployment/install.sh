@@ -159,7 +159,7 @@ show_completion_message() {
   log "wg-portal installed successfully!"
   log ""
   log "Configuration:"
-  log "  - Configuration file: /etc/wg-portal/config"
+  log "  - Configuration file: /etc/wg-portal/config.yml"
   log ""
   log "Service Information:"
   log "  - Binary installed: /etc/wg-portal/wg-portal"
