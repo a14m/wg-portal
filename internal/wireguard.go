@@ -95,14 +95,14 @@ func ToggleConnection(name string) ([]byte, error) {
 func stopActiveConnections(activeConnections []*WireGuardConnection) ([]byte, error) {
 	var output []byte
 	for _, activeConnection := range activeConnections {
-		log.Printf("Stopping connection %s.", activeConnection.Name)
+		log.Printf("Stopping connection %s", activeConnection.Name)
 		cmd := exec.Command("sudo", "wg-quick", "down", activeConnection.Name)
 		out, err := cmd.CombinedOutput()
 		if err != nil {
 			return nil, err
 		}
 		output = append(output, out...)
-		log.Printf("Successfully stopped connection %s.", activeConnection.Name)
+		log.Printf("Successfully stopped connection %s", activeConnection.Name)
 	}
 	return output, nil
 }
@@ -111,13 +111,13 @@ func startConnection(connection *WireGuardConnection) ([]byte, error) {
 	if connection.Active {
 		return nil, nil
 	}
-	log.Printf("Starting connection %s.", connection.Name)
+	log.Printf("Starting connection %s", connection.Name)
 	cmd := exec.Command("sudo", "wg-quick", "up", connection.Name)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		return nil, err
 	}
-	log.Printf("Successfully started connection %s.", connection.Name)
+	log.Printf("Successfully started connection %s", connection.Name)
 	return output, nil
 }
 

@@ -75,7 +75,7 @@ func (s *Server) handleHome(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	if err := s.templates.ExecuteTemplate(w, "index.html", nil); err != nil {
-		log.Printf("Error rendering template: %v", err)
+		log.Printf("Failed to render template: %v", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}
 }
@@ -89,7 +89,7 @@ func (s *Server) handleConnectionsAPI(w http.ResponseWriter, r *http.Request) {
 
 	connections, err := internal.GetConnections()
 	if err != nil {
-		log.Printf("Error getting connections: %v", err)
+		log.Printf("Failed to get connections: %v", err)
 		s.sendErrorResponse(w, fmt.Sprintf("%v", err), http.StatusInternalServerError)
 		return
 	}
@@ -120,7 +120,7 @@ func (s *Server) handleToggleAPI(w http.ResponseWriter, r *http.Request) {
 
 	output, err := internal.ToggleConnection(req.Name)
 	if err != nil {
-		log.Printf("Error toggling connection %s: %v (output: %s)", req.Name, err, string(output))
+		log.Printf("Failed to toggle connection %s: %v (output: %s)", req.Name, err, string(output))
 		s.sendErrorResponse(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -142,7 +142,7 @@ func (s *Server) handleStatusAPI(w http.ResponseWriter, r *http.Request) {
 
 	status, err := internal.GetStatus()
 	if err != nil {
-		log.Printf("Error getting status: %v", err)
+		log.Printf("Failed to get status: %v", err)
 		s.sendErrorResponse(w, fmt.Sprintf("%v", err), http.StatusInternalServerError)
 		return
 	}
@@ -211,7 +211,7 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 				"Error": "Wrong password",
 			}
 			if err := s.templates.ExecuteTemplate(w, "login.html", templateData); err != nil {
-				log.Printf("Error rendering login template: %v", err)
+				log.Printf("Failed to render login template: %v", err)
 				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			}
 		}
@@ -229,7 +229,7 @@ func (s *Server) showLoginForm(w http.ResponseWriter, r *http.Request) {
 		"IsHTTPS": isHTTPS,
 	}
 	if err := s.templates.ExecuteTemplate(w, "login.html", templateData); err != nil {
-		log.Printf("Error rendering login template: %v", err)
+		log.Printf("Failed to render login template: %v", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}
 }
@@ -238,7 +238,7 @@ func (s *Server) loginUser(w http.ResponseWriter, r *http.Request) {
 	// Create session
 	sessionID, expires, err := s.sessionManager.CreateSession()
 	if err != nil {
-		log.Printf("Error creating session: %v", err)
+		log.Printf("Failed to create session: %v", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
@@ -284,7 +284,7 @@ func (s *Server) handleLogout(w http.ResponseWriter, r *http.Request) {
 // Start starts the HTTP server
 func (s *Server) Start() error {
 	addr := s.config.GetAddress()
-	log.Printf("Starting on http://%s\n", addr)
+	log.Printf("Starting on http://%s", addr)
 	return http.ListenAndServe(addr, s.mux)
 }
 
