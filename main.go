@@ -223,7 +223,10 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) showLoginForm(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	isHTTPS := r.TLS != nil
+	isHTTPS := r.TLS != nil ||
+		r.Header.Get("X-Forwarded-Proto") == "https" ||
+		r.Header.Get("X-Forwarded-Ssl") == "on" ||
+		r.Header.Get("X-Url-Scheme") == "https"
 	templateData := map[string]any{
 		"Error":   "",
 		"IsHTTPS": isHTTPS,
